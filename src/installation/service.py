@@ -1,7 +1,7 @@
 from typing import Any
 
-from ..main import Depends
-from ..database import DBManager
+from fastapi import Depends
+from ..database.database import DBManager
 
 
 def install_tables() -> Any:

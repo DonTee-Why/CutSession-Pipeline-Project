@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from ..main import Depends
-from ..db import service
+from fastapi import Depends
+from ..installation import service
 
 router = APIRouter()
 
