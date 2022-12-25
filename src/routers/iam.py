@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ..iam.schemas import user
+from ..iam.schemas import user, merchant
 from ..iam import service
 
 register_router = APIRouter(
@@ -18,9 +18,9 @@ sign_in_router = APIRouter(
 def register_user(user: user.UserCreateModel):
     return service.register_user(user)
 
-@register_router.get("/merchants")
-def register_merchant():
-    pass
+@register_router.post("/merchants")
+def register_merchant(merchant: merchant.MerchantCreateModel):
+    return service.register_merchant(merchant)
 
 @sign_in_router.get("/")
 def register_merchant():

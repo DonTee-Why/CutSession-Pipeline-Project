@@ -58,7 +58,7 @@ class DBManager(object):
             cursor = self.db.cursor()
             cursor.execute(arg)
 
-            return cursor.fetchone()
+            return cursor.fetchall()
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500,

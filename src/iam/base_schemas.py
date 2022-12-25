@@ -3,7 +3,7 @@ from datetime import datetime, date
 from enum import Enum
 import uuid
 
-from pydantic import BaseModel, validator, validate_email
+from pydantic import BaseModel, validator
 from .utils import required
 
 
@@ -36,6 +36,7 @@ class BaseClassModel(BaseModel):
             "booking_ref": "bookingRef",
             "phone_number": "phoneNumber",
             "city_of_residence": "cityOfResidence",
+            "city_of_operation": "cityOfOperation",
         }
 
     _required_fields = validator("name", "email", "username", allow_reuse=True, check_fields=False)(required)
@@ -51,7 +52,7 @@ class UserBaseModel(BaseClassModel):
             phone_number (string): Phone number of the user
     '''
     user_id: str | None
-    dob: date
+    dob: str
     city_of_residence: str
 
     _required_fields = validator("dob", "city_of_residence", allow_reuse=True, check_fields=False)(required)
@@ -64,7 +65,7 @@ class MerchantBaseModel(BaseClassModel):
         Parameters:
             city_of_operation (string): Merchant's city of operation
     '''
-    merchant_id = str(uuid.uuid4())
+    merchant_id: str | None
     city_of_operation: str
 
     _required_fields = validator("city_of_operation", allow_reuse=True, check_fields=False)(required)

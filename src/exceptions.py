@@ -17,7 +17,7 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
         status_code=status.HTTP_400_BAD_REQUEST, 
         content=jsonable_encoder({
             "message": "Bad Request",
-            "errors": [(f"{error['loc'][1]} {error['msg']}") for error in exc.errors()]
+            "errors": [(f"{error['loc'][1]}: {error['msg']}") for error in exc.errors()]
         })
     )
 
