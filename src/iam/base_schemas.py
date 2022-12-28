@@ -4,12 +4,13 @@ from enum import Enum
 import uuid
 
 from pydantic import BaseModel, validator
-from .utils import required
+from . import utils
 
 
 class SessionType(str, Enum):
     WEEKDAY = "WeekDay"
     WEEKEND = "WeekEnd"
+
 
 class BaseClassModel(BaseModel):
     '''
@@ -39,7 +40,7 @@ class BaseClassModel(BaseModel):
             "city_of_operation": "cityOfOperation",
         }
 
-    _required_fields = validator("name", "email", "username", allow_reuse=True, check_fields=False)(required)
+    _required_fields = validator("name", "email", "username", allow_reuse=True, check_fields=False)(utils.required)
 
 
 class UserBaseModel(BaseClassModel):
@@ -55,7 +56,7 @@ class UserBaseModel(BaseClassModel):
     dob: str
     city_of_residence: str
 
-    _required_fields = validator("dob", "city_of_residence", allow_reuse=True, check_fields=False)(required)
+    _required_fields = validator("dob", "city_of_residence", allow_reuse=True, check_fields=False)(utils.required)
 
 
 class MerchantBaseModel(BaseClassModel):
@@ -68,7 +69,7 @@ class MerchantBaseModel(BaseClassModel):
     merchant_id: str | None
     city_of_operation: str
 
-    _required_fields = validator("city_of_operation", allow_reuse=True, check_fields=False)(required)
+    _required_fields = validator("city_of_operation", allow_reuse=True, check_fields=False)(utils.required)
 
 
 class SessionBaseModel(BaseModel):
@@ -86,7 +87,7 @@ class SessionBaseModel(BaseModel):
     ends_at: str
     type: SessionType
 
-    _required_fields = validator("*", allow_reuse=True, check_fields=False)(required)
+    _required_fields = validator("*", allow_reuse=True, check_fields=False)(utils.required)
 
 class BookingsBaseModel(BaseModel):
     '''
@@ -108,4 +109,4 @@ class BookingsBaseModel(BaseModel):
     notes: str = None
     title: str = None
 
-    _required_fields = validator("session_id", "user_id", "date", "starts_at", "ends_at", allow_reuse=True, check_fields=False)(required)
+    _required_fields = validator("session_id", "user_id", "date", "starts_at", "ends_at", allow_reuse=True, check_fields=False)(utils.required)
