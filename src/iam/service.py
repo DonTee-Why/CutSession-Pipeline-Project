@@ -19,19 +19,12 @@ from ..database.database import db, User, Merchant
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# oauth2_scheme = OAuth2PasswordBearer(
-#     tokenUrl="sign-in", 
-#     scopes={
-#         AccessType.USER.value: "Permission for users.", 
-#         AccessType.MERCHANT.value: "Permission for merchants."
-#     },
-# )
-user_db = User()
-merchant_db = Merchant()
+user = User()
+merchant = Merchant()
 settings = AppSettings()
 
 def register_user(user_data: UserCreateModel) -> dict():
-    register_query = User().insert().values(user_data.dict())
+    register_query = user.insert().values(user_data.dict())
     data = db.fetch_one(register_query.query)
     result = UserModel(**data)
 
@@ -41,7 +34,7 @@ def register_user(user_data: UserCreateModel) -> dict():
 
 
 def register_merchant(merchant_data: MerchantCreateModel) -> dict():
-    register_query = Merchant().insert().values(merchant_data.dict())
+    register_query = merchant.insert().values(merchant_data.dict())
     data = db.fetch_one(register_query.query)
     result = MerchantModel(**data)
 
@@ -51,25 +44,25 @@ def register_merchant(merchant_data: MerchantCreateModel) -> dict():
 
 
 def get_user_by_id(id: str) -> UserModel:
-    user_query = User().select().where("user_id", "=", id)
+    user_query = user.select().where("user_id", "=", id)
     data = db.fetch_all(user_query.query)
     return UserModel(**data[0])
 
 
 def get_merchant_by_id(id: str) -> MerchantModel:
-    merchant_query = Merchant().select().where("merchant_id", "=", id)
+    merchant_query = merchant.select().where("merchant_id", "=", id)
     data = db.fetch_all(merchant_query.query)
     return MerchantModel(**data[0])
 
 
 def get_user(username: str) -> UserInModel:
-    user_query = User().select().where("username", "=", username)
+    user_query = user.select().where("username", "=", username)
     data = db.fetch_all(user_query.query)
     return UserInModel(**data[0])
 
 
 def get_merchant(username: str) -> MerchantInModel:
-    merchant_query = Merchant().select().where("username", "=", username)
+    merchant_query = merchant.select().where("username", "=", username)
     data = db.fetch_all(merchant_query.query)
     return MerchantInModel(**data[0])
 
@@ -130,11 +123,11 @@ async def authorize(data: AuthModel):
 
 async def fetch_clients(limit: int, offset: int, type: AccessType, city: str, name: str):
     if type.value == "USER":
-        fetch_query = user_db.select().where("city_of_residence", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
+        fetch_query = user.select().where("city_of_residence", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
         user_list = db.fetch_all(fetch_query.query)
         data = [UserModel(**client) for client in user_list]
     elif type.value == "MERCHANT":
-        fetch_query = merchant_db.select().where("city_of_operation", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
+        fetch_query = merchant.select().where("city_of_operation", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
         merchant_list = db.fetch_all(fetch_query.query)
         data=[MerchantModel(**client) for client in merchant_list]
     

@@ -85,6 +85,7 @@ class DbQuery():
         self.query = ""
 
     def db_select(self, select_columns: str, table_name: str):
+        self.query = ""
         select_query = f"SELECT {select_columns} FROM {table_name} "
         self.query = "".join([select_query, self.query])
         return self
@@ -100,6 +101,7 @@ class DbQuery():
         return self
 
     def db_insert(self, table_name: str):
+        self.query = ""
         insert_query = f"INSERT INTO {table_name} "
         self.query = "".join([insert_query, self.query])
         return self
@@ -118,11 +120,6 @@ class DbQuery():
         pagination_query = f"LIMIT {arg[0]} OFFSET {arg[1]} "
         self.query = "".join([self.query, pagination_query])
         return self
-
-    # def db_returning(self, arg: list()):
-    #     values_query = f" RETURNING *"
-    #     self.query = "".join([self.query, values_query])
-    #     return self
 
 
 class User(DbQuery):
@@ -254,7 +251,3 @@ class Booking(DbQuery):
 
 
 db = DBManager()
-# user = User()
-# merchant = Merchant()
-session = Session()
-booking = Booking()
