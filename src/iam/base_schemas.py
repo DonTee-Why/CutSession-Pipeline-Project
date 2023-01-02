@@ -15,11 +15,6 @@ class AccessType(str, Enum):
     MERCHANT = "MERCHANT"
 
 
-class AccessType(str, Enum):
-    USER = "USER"
-    MERCHANT = "MERCHANT"
-
-
 class BaseClassModel(BaseModel):
     '''
     General Base class. It specifies common attributes of users and merchants
@@ -81,46 +76,10 @@ class MerchantBaseModel(BaseClassModel):
     _required_fields = validator("city_of_operation", allow_reuse=True, check_fields=False)(utils.required)
 
 
-class SessionBaseModel(BaseModel):
-    '''
-    General Base class. It specifies common attributes for creating and retreiving studio sessions
-
-        Parameters:
-            merchant_id (string): Id of the merchant
-            starts_at (string): The time the session starts
-            ends_at (string): The time the session ends
-            type (string): Type of session (either weekday or weekend sessions)
-    '''
-    merchant_id: str
-    starts_at: str
-    ends_at: str
-    type: SessionType
-
-    _required_fields = validator("*", allow_reuse=True, check_fields=False)(utils.required)
-
-class BookingsBaseModel(BaseModel):
-    '''
-    General Base class. It specifies common attributes for creating and retreiving studio sessions
-
-        Parameters:
-            merchant_id (string): Id of the merchant
-            starts_at (string): The time the session starts
-            ends_at (string): The time the session ends
-            type (string): Type of session (either weekday or weekend sessions)
-            notes (string): Additional notes
-            title (string): Session titles
-    '''
-    session_id: str
-    user_id: str
-    date: str
-    starts_at: str
-    ends_at: str
-    notes: str = None
-    title: str = None
-
-    _required_fields = validator("session_id", "user_id", "date", "starts_at", "ends_at", allow_reuse=True, check_fields=False)(utils.required)
-
 class ResponseCollection(BaseModel):
+    '''
+    Response Collection Class for retreiving a collection of data
+    '''
     count: int
     next: str
     previous: str

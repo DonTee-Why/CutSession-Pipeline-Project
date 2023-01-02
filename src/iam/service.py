@@ -99,7 +99,12 @@ async def authorize(data: AuthModel):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail={
+                "message": "Unauthorised",
+                "errors": [
+                    "Incorrect username or password"
+                ]
+            }
         )
 
     access_token_expires = timedelta(

@@ -21,18 +21,22 @@ clients_router = APIRouter(
     tags=["clients"],
 )
 
+
 @register_router.post("/users")
 def register_user(user: UserCreateModel):
     return service.register_user(user)
+
 
 @register_router.post("/merchants")
 def register_merchant(merchant: MerchantCreateModel):
     return service.register_merchant(merchant)
 
+
 @sign_in_router.post("/", response_model=AuthResponse, response_model_exclude_none=True)
 async def login(user: AuthModel):
     return await service.authorize(user)
 
-@clients_router.post("/", response_model=ResponseCollection, response_model_exclude_none=True)
+
+@clients_router.get("/", response_model=ResponseCollection, response_model_exclude_none=True)
 async def fetch_clients(limit: int, offset: int, type: AccessType, city: str = "", name: str = ""):
     return await service.fetch_clients(limit, offset, type, city, name)
