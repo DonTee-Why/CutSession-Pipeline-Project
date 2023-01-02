@@ -5,9 +5,10 @@ from fastapi import HTTPException
 class DBConnection():
     def __init__(self, db):
         self.conn = sqlite3.connect(database=db, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
         self.conn.execute("pragma foreign_keys = on")
         self.conn.commit()
-
+    
     # Get DBManager instance
     @classmethod
     def get_db_conn_instance(cls):
@@ -34,13 +35,17 @@ class DBManager():
                                 })
         finally:
             self.db.commit()
+    
+    def to_dict(self, row):
+        return {key: row[key] for key in row.keys()}
 
     def fetch_one(self, arg: str):
         try:
             cursor = self.db.cursor()
             cursor.execute(arg)
+            row = cursor.fetchone()
 
-            return cursor.fetchone()
+            return self.to_dict(row)
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500,
@@ -71,7 +76,7 @@ class DBManager():
         finally:
             self.db.commit()
 
-    def __del__(self) -> None:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.db.close()
 
 
@@ -85,12 +90,12 @@ class DbQuery():
         return self
 
     def db_where(self, column: str, operator: str, value: str):
-        where_query = f"WHERE {column} {operator} {value} "
+        where_query = f"WHERE {column} {operator} '{value}' "
         self.query = "".join([self.query, where_query])
         return self
 
     def db_and_where(self, column: str, operator: str, value: str):
-        where_query = f"AND {column} {operator} {value} "
+        where_query = f"AND {column} {operator} '{value}' "
         self.query = "".join([self.query, where_query])
         return self
 
@@ -99,7 +104,7 @@ class DbQuery():
         self.query = "".join([insert_query, self.query])
         return self
 
-    def db_values(self, arg: dict()):
+    def db_values(self, arg: dict):
         columns = ", ".join(arg.keys())
         column_values = ", ".join(
             [f"'{str(value)}'" for value in arg.values()])
@@ -121,7 +126,7 @@ class User(DbQuery):
         self.table_name = "users"
 
     def select(self):
-        select_columns = "users.user_id, users.name, users.username, users.email, users.dob, users.city_of_residence, users.phone_number"
+        select_columns = "users.user_id, users.name, users.username, users.email, users.dob, users.city_of_residence, users.phone_number, users.password"
         self.db_select(select_columns, self.table_name)
         return self
 
@@ -148,7 +153,7 @@ class Merchant(DbQuery):
         self.table_name = "merchants"
 
     def select(self):
-        select_columns = "merchants.merchant_id, merchants.name, merchants.username, merchants.email, merchants.dob, merchants.city_of_operation, merchants.phone_number"
+        select_columns = "merchants.merchant_id, merchants.name, merchants.username, merchants.email, merchants.dob, merchants.city_of_operation, merchants.phone_number, merchants.password"
         self.db_select(select_columns, self.table_name)
         return self
 
@@ -224,7 +229,7 @@ class Booking(DbQuery):
 
 
 db = DBManager()
-user = User()
-merchant = Merchant()
+# user = User()
+# merchant = Merchant()
 session = Session()
 booking = Booking()

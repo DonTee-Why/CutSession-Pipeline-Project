@@ -9,12 +9,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def generate_uuid(value: str) -> str:
-    return str(uuid.uuid4())
+    value = str(uuid.uuid4())
+    return value
 
 
 def required(value: str):
     if value is None:
-        raise ValueError(f"Field is required!!!")
+        raise ValueError(f"Field is required")
     return value
 
 
@@ -46,7 +47,8 @@ def valid_date(value):
     try:
         datetime.strptime(value, '%Y-%m-%d')
     except Exception:
-        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        raise ValueError("Incorrect date format. Date format should be YYYY-MM-DD")
+    return value
 
 
 def email(value):
@@ -54,3 +56,8 @@ def email(value):
         raise ValueError(f"Field exceeds limit of 50 characters")
     valid_email = validate_email(value)
     return valid_email[1]
+
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
+

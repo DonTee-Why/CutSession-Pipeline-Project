@@ -18,15 +18,16 @@ class MerchantCreateModel(MerchantBaseModel):
     username: str
     password: str
     email: str
-    merchant_id: str | None
+    merchant_id: str = None
 
     _required_fields = validator("password", "username", allow_reuse=True)(utils.required)
-    _generate_id = validator("merchant_id", allow_reuse=True, check_fields=False)(utils.generate_uuid)
+    _generate_id = validator("merchant_id", allow_reuse=True, always=True, check_fields=False)(utils.generate_uuid)
     _valid_email = validator("email", allow_reuse=True)(utils.email)
     _valid_name = validator("name", allow_reuse=True)(utils.name)
     _valid_min_length = validator("password", "username", allow_reuse=True)(utils.valid_min_length)
     _valid_max_length = validator("username", "phone_number", allow_reuse=True)(utils.valid_max_length)
     _valid_length_range = validator("city_of_operation", "phone_number", allow_reuse=True)(utils.valid_length_range)
+    _hash_password = validator("password", allow_reuse=True)(utils.hash_password)
 
 
 class MerchantModel(MerchantBaseModel):
@@ -38,12 +39,12 @@ class MerchantModel(MerchantBaseModel):
     '''
     merchant_id: str
 
-    def from_list(self, data: list):
-        self.user_id = data[0]
-        self.name = data[1]
-        self.username = data[2]
-        self.email = data[3]
-        self.city_of_operation = data[4]
-        self.phone_number = data[5]
 
-        return self
+class MerchantInModel(MerchantBaseModel):
+    '''
+    Merchant class for retreiving merchant data
+
+        Parameters:
+            password (string): merchant password
+    '''
+    password: str

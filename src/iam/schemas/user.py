@@ -17,11 +17,12 @@ class UserCreateModel(UserBaseModel):
             cityOfResidence (string): City of Residence of the user
             password (string): Password of the user
     '''
+    user_id: str = None
     username: str
     password: str
     email: str
 
-    _generate_id = validator("user_id", allow_reuse=True, check_fields=False)(utils.generate_uuid)
+    _generate_id = validator("user_id", pre=True, always=True, allow_reuse=True)(utils.generate_uuid)
     _required_fields = validator("username","password", allow_reuse=True)(utils.required)
     _valid_email = validator("email", allow_reuse=True)(utils.email)
     _valid_name = validator("name", allow_reuse=True)(utils.name)
@@ -29,6 +30,7 @@ class UserCreateModel(UserBaseModel):
     _valid_min_length = validator("password", "username", allow_reuse=True)(utils.valid_min_length)
     _valid_max_length = validator("city_of_residence", "username", "phone_number", allow_reuse=True)(utils.valid_max_length)
     _valid_length_range = validator("city_of_residence", "phone_number", allow_reuse=True)(utils.valid_length_range)
+    _hash_password = validator("password", allow_reuse=True)(utils.hash_password)
 
 
 class UserModel(UserBaseModel):
@@ -36,24 +38,22 @@ class UserModel(UserBaseModel):
     User class for reading user data
 
         Parameters:
-            user_id (string | UUID): ID of the user
+            user_id (string): ID of the user
             name (string): Name of the user
             email (string<email>): Email address of the user
             username (string): Username of the user
             phoneNumber (string): Phone number of the user
-            userId (string): Id of the user
             dob (date): Date of birth of the user
             cityOfResidence (string): City of Residence of the user
     '''
     user_id: str
 
-    def from_list(self, data: list):
-        self.user_id = data[0]
-        self.name = data[1]
-        self.username = data[2]
-        self.email = data[3]
-        self.dob = data[4]
-        self.city_of_residence = data[5]
-        self.phone_number = data[6]
 
-        return self
+class UserInModel(UserBaseModel):
+    '''
+    Merchant class for retreiving merchant data
+
+        Parameters:
+            password (string): merchant password
+    '''
+    password: str

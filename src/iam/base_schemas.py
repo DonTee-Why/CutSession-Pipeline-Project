@@ -4,12 +4,17 @@ from enum import Enum
 import uuid
 
 from pydantic import BaseModel, validator
-from . import utils
+from .. import utils
 
 
 class SessionType(str, Enum):
     WEEKDAY = "WeekDay"
     WEEKEND = "WeekEnd"
+
+
+class AccessType(str, Enum):
+    USER = "USER"
+    MERCHANT = "MERCHANT"
 
 
 class BaseClassModel(BaseModel):
@@ -39,6 +44,7 @@ class BaseClassModel(BaseModel):
             "city_of_residence": "cityOfResidence",
             "city_of_operation": "cityOfOperation",
         }
+        allow_population_by_field_name = True
 
     _required_fields = validator("name", "email", "username", allow_reuse=True, check_fields=False)(utils.required)
 
