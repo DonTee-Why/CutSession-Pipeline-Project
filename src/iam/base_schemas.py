@@ -1,8 +1,6 @@
 from typing import Optional
 from datetime import datetime, date
 from enum import Enum
-import uuid
-
 from pydantic import BaseModel, validator
 from .. import utils
 
@@ -10,6 +8,11 @@ from .. import utils
 class SessionType(str, Enum):
     WEEKDAY = "WeekDay"
     WEEKEND = "WeekEnd"
+
+
+class AccessType(str, Enum):
+    USER = "USER"
+    MERCHANT = "MERCHANT"
 
 
 class AccessType(str, Enum):
@@ -116,3 +119,9 @@ class BookingsBaseModel(BaseModel):
     title: str = None
 
     _required_fields = validator("session_id", "user_id", "date", "starts_at", "ends_at", allow_reuse=True, check_fields=False)(utils.required)
+
+class ResponseCollection(BaseModel):
+    count: int
+    next: str
+    previous: str
+    data: list = []

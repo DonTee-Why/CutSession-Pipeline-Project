@@ -114,6 +114,11 @@ class DbQuery():
         self.query = "".join([self.query, values_query])
         return self
 
+    def db_paginate(self, arg: list):
+        pagination_query = f"LIMIT {arg[0]} OFFSET {arg[1]} "
+        self.query = "".join([self.query, pagination_query])
+        return self
+
     # def db_returning(self, arg: list()):
     #     values_query = f" RETURNING *"
     #     self.query = "".join([self.query, values_query])
@@ -146,6 +151,11 @@ class User(DbQuery):
         self.db_values(arg)
         return self
 
+    def paginate(self, limit: int, offset: int = 1):
+        arg = [limit, (limit * offset - limit)]
+        self.db_paginate(arg)
+        return self
+
 
 class Merchant(DbQuery):
     def __init__(self) -> None:
@@ -171,6 +181,11 @@ class Merchant(DbQuery):
 
     def values(self, arg: dict()):
         self.db_values(arg)
+        return self
+
+    def paginate(self, limit: int, offset: int = 1):
+        args = (limit, (limit * offset - limit))
+        self.db_paginate(args)
         return self
 
 
@@ -200,6 +215,11 @@ class Session(DbQuery):
         self.db_values(arg)
         return self
 
+    def paginate(self, limit: int, offset: int = 1):
+        args = (limit, (limit * offset - limit))
+        self.db_paginate(args)
+        return self
+
 
 class Booking(DbQuery):
     def __init__(self) -> None:
@@ -225,6 +245,11 @@ class Booking(DbQuery):
 
     def values(self, arg: dict()):
         self.db_values(arg)
+        return self
+
+    def paginate(self, limit: int, offset: int = 1):
+        args = (limit, (limit * offset - limit))
+        self.db_paginate(args)
         return self
 
 

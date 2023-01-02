@@ -2,11 +2,7 @@ from enum import Enum
 from pydantic import BaseModel, validator
 from fastapi.security import OAuth2PasswordRequestForm
 from ... import utils
-
-
-class AccessType(str, Enum):
-    USER = "USER"
-    MERCHANT = "MERCHANT"
+from ..base_schemas import AccessType
 
 
 class AuthModel(BaseModel, OAuth2PasswordRequestForm):
@@ -25,6 +21,7 @@ class AuthModel(BaseModel, OAuth2PasswordRequestForm):
         fields = {
             "access_type": "accessType",
         }
+
 
 class AuthResponse(BaseModel):
     '''

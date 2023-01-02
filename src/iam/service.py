@@ -11,20 +11,21 @@ from jose import jwt, JWTError
 from pydantic import BaseModel, ValidationError
 import uuid
 from ..config import AppSettings
-from .schemas.auth import AuthModel, AuthResponse, AccessType
+from .base_schemas import AccessType, ResponseCollection
+from .schemas.auth import AuthModel, AuthResponse
 from .schemas.user import UserCreateModel, UserModel, UserInModel
 from .schemas.merchant import MerchantCreateModel, MerchantModel, MerchantInModel
 from ..database.database import db, User, Merchant
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="sign-in", 
-    scopes={
-        AccessType.USER.value: "Permission for users.", 
-        AccessType.MERCHANT.value: "Permission for merchants."
-    },
-)
+# oauth2_scheme = OAuth2PasswordBearer(
+#     tokenUrl="sign-in", 
+#     scopes={
+#         AccessType.USER.value: "Permission for users.", 
+#         AccessType.MERCHANT.value: "Permission for merchants."
+#     },
+# )
 user_db = User()
 merchant_db = Merchant()
 settings = AppSettings()
@@ -51,13 +52,13 @@ def register_merchant(merchant_data: MerchantCreateModel) -> dict():
 
 def get_user_by_id(id: str) -> UserModel:
     user_query = User().select().where("user_id", "=", id)
-    data = db.fetch_one(user_query.query)
+    data = db.fetch_all(user_query.query)
     return UserModel(**data[0])
 
 
 def get_merchant_by_id(id: str) -> MerchantModel:
     merchant_query = Merchant().select().where("merchant_id", "=", id)
-    data = db.fetch_one(merchant_query.query)
+    data = db.fetch_all(merchant_query.query)
     return MerchantModel(**data[0])
 
 
@@ -127,43 +128,21 @@ async def authorize(data: AuthModel):
     return auth_res
 
 
-async def get_current_user(security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme)):
-    if security_scopes.scopes:
-        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
-    else:
-        authenticate_value = "Bearer"
-
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": authenticate_value},
+async def fetch_clients(limit: int, offset: int, type: AccessType, city: str, name: str):
+    if type.value == "USER":
+        fetch_query = user_db.select().where("city_of_residence", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
+        user_list = db.fetch_all(fetch_query.query)
+        data = [UserModel(**client) for client in user_list]
+    elif type.value == "MERCHANT":
+        fetch_query = merchant_db.select().where("city_of_operation", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
+        merchant_list = db.fetch_all(fetch_query.query)
+        data=[MerchantModel(**client) for client in merchant_list]
+    
+    res = ResponseCollection(
+        count=len(data),
+        next=f"",
+        previous=f"",
+        data=data
     )
 
-    try:
-        payload = jwt.decode(token, get_settings.APP_KEY, algorithms=[get_settings.ALGORITHM])
-        user_sub: str = payload.get("sub")
-        if user_sub is None:
-            raise credentials_exception
-
-        split_sub = user_sub.split(":")
-        user_type = split_sub[0]
-        user_id = split_sub[1]
-        token_scopes = payload.get("scopes", [])
-    except (JWTError, ValidationError):
-        raise credentials_exception
-
-    user = get_user_by_id(user_id) if user_type == "USER" else get_merchant_by_id(user_id)
-    if user is None:
-        raise credentials_exception
-    for scope in security_scopes.scopes:
-        if scope not in token_scopes:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Not enough permissions",
-                headers={"WWW-Authenticate": authenticate_value},
-            )
-    return user
-
-@lru_cache
-def get_settings():
-    return AppSettings()
+    return res
