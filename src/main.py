@@ -15,9 +15,9 @@ app.include_router(iam.register_router)
 async def validation_exception_handler(request, exc):
     return await request_validation_exception_handler(request, exc)
 
-# @app.exception_handler(StarletteHTTPException)
-# async def http_exception_handler(request, exc):
-#     return await http_exception_handler(request, exc)
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    return await http_exception_handler(request, exc)
 
 
 @app.get("/")

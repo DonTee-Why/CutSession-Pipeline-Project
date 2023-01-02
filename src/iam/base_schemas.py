@@ -24,7 +24,7 @@ class BaseClassModel(BaseModel):
     name: str
     email: str
     username: str
-    phone_number: str | None
+    phone_number: str = None
 
     class Config:
         fields = {

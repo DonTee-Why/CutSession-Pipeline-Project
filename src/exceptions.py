@@ -4,17 +4,17 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from pydantic import ValidationError
 
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     return await JSONResponse(status_code=exc.status_code, content={
-        "message": [exc.detail]
+        "message": [exc.detail],
+        "errors": []
     })
 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST, 
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
         content=jsonable_encoder({
             "message": "Bad Request",
             "errors": [(f"{error['loc'][1]}: {error['msg']}") for error in exc.errors()]

@@ -16,7 +16,7 @@ class DBConnection():
         return cls.db_instance.conn
 
 
-class DBManager(object):
+class DBManager():
     def __init__(self) -> None:
         self.db = DBConnection.get_db_conn_instance()
 

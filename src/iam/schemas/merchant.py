@@ -37,3 +37,13 @@ class MerchantModel(MerchantBaseModel):
             user_id (string | UUID): ID of the merchant
     '''
     merchant_id: str
+
+    def from_list(self, data: list):
+        self.user_id = data[0]
+        self.name = data[1]
+        self.username = data[2]
+        self.email = data[3]
+        self.city_of_operation = data[4]
+        self.phone_number = data[5]
+
+        return self

@@ -46,3 +46,14 @@ class UserModel(UserBaseModel):
             cityOfResidence (string): City of Residence of the user
     '''
     user_id: str
+
+    def from_list(self, data: list):
+        self.user_id = data[0]
+        self.name = data[1]
+        self.username = data[2]
+        self.email = data[3]
+        self.dob = data[4]
+        self.city_of_residence = data[5]
+        self.phone_number = data[6]
+
+        return self
