@@ -1,2 +1,2 @@
 # CutSession-Pipeline-Project
-A Python API for scheduling sessions in photo and music studios.
+A Python API for scheduling studio (photo and music) sessions.
