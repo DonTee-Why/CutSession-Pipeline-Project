@@ -53,7 +53,7 @@ def valid_date(value):
 
 def valid_time(value):
     try:
-        datetime.strptime(value, '%H:%M:%S')
+        datetime.strptime(value, '%H:%M:%SZ')
     except Exception:
         raise ValueError("Incorrect time format. Time format should be H:M:S in 24-hour format.")
     return value

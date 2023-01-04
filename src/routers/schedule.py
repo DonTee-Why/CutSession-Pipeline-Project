@@ -9,13 +9,8 @@ from ..schedule import service
 
 studio_router = APIRouter(
     prefix="/studios",
-    tags=["register"],
+    tags=["schedule"],
     responses={404: {"message": "Not Found | 404"}},
-)
-
-bookings_router = APIRouter(
-    prefix="/bookings",
-    tags=["sign_in"],
 )
 
 
@@ -25,7 +20,7 @@ bookings_router = APIRouter(
 
 
 @studio_router.post("/{merchantId}")
-def create_studio_session(session: SessionCreateModel, merchantId: str = Depends(service.get_merchant_by_id)):
+def create_studio_session(merchantId: str, session: SessionCreateModel ):
     return service.create_studio_session(session, merchantId)
 
 

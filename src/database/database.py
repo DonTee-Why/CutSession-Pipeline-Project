@@ -45,6 +45,9 @@ class DBManager():
             cursor.execute(arg)
             row = cursor.fetchone()
 
+            if row is None:
+                return None
+
             return self.to_dict(row)
         except Exception as e:
             self.db.rollback()
@@ -160,7 +163,7 @@ class Merchant(DbQuery):
         self.table_name = "merchants"
 
     def select(self):
-        select_columns = "merchants.merchant_id, merchants.name, merchants.username, merchants.email, merchants.dob, merchants.city_of_operation, merchants.phone_number, merchants.password"
+        select_columns = "merchants.merchant_id, merchants.name, merchants.username, merchants.email, merchants.city_of_operation, merchants.phone_number, merchants.password"
         self.db_select(select_columns, self.table_name)
         return self
 

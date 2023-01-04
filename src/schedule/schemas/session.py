@@ -10,7 +10,7 @@ class SessionCreateModel(SessionBaseModel):
         Parameters:
             id (string): Id of the merchant
     '''
-    session_id : str
+    session_id : str = None
 
     _generate_id = validator("session_id", pre=True, always=True, allow_reuse=True)(utils.generate_uuid)
     _required_fields = validator("starts_at", "ends_at", "type", allow_reuse=True)(utils.required)
