@@ -47,7 +47,15 @@ def valid_date(value):
     try:
         datetime.strptime(value, '%Y-%m-%d')
     except Exception:
-        raise ValueError("Incorrect date format. Date format should be YYYY-MM-DD")
+        raise ValueError("Incorrect date format. Date format should be YYYY-MM-DD.")
+    return value
+
+
+def valid_time(value):
+    try:
+        datetime.strptime(value, '%H:%M:%S')
+    except Exception:
+        raise ValueError("Incorrect time format. Time format should be H:M:S in 24-hour format.")
     return value
 
 

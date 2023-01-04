@@ -26,7 +26,7 @@ class UserCreateModel(UserBaseModel):
     _required_fields = validator("username","password", allow_reuse=True)(utils.required)
     _valid_email = validator("email", allow_reuse=True)(utils.email)
     _valid_name = validator("name", allow_reuse=True)(utils.name)
-    _valid_date = validator("dob", allow_reuse=True)(utils.valid_date)
+    _valid_name = validator("dob", allow_reuse=True)(utils.valid_date)
     _valid_min_length = validator("password", "username", allow_reuse=True)(utils.valid_min_length)
     _valid_max_length = validator("city_of_residence", "username", "phone_number", allow_reuse=True)(utils.valid_max_length)
     _valid_length_range = validator("city_of_residence", "phone_number", allow_reuse=True)(utils.valid_length_range)
