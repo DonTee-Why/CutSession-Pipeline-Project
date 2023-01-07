@@ -65,8 +65,12 @@ class DBManager():
         try:
             cursor = self.db.cursor()
             cursor.execute(arg)
+            result_array = cursor.fetchall()
 
-            return cursor.fetchall()
+            if not result_array:
+                return None
+
+            return [self.to_dict(data) for data in result_array]
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500,

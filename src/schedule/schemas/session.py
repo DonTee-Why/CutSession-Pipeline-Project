@@ -14,7 +14,7 @@ class SessionCreateModel(SessionBaseModel):
 
     _generate_id = validator("session_id", pre=True, always=True, allow_reuse=True)(utils.generate_uuid)
     _required_fields = validator("starts_at", "ends_at", "type", allow_reuse=True)(utils.required)
-    _valid_date = validator("starts_at", "ends_at", allow_reuse=True)(utils.valid_time)
+    _valid_time = validator("starts_at", "ends_at", allow_reuse=True)(utils.valid_time)
 
 
 class SessionModel(SessionBaseModel):

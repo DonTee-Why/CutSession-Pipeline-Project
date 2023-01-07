@@ -71,20 +71,19 @@ class BookingsBaseModel(BaseModel):
     General Base class. It specifies common attributes for creating and retreiving studio sessions
 
         Parameters:
-            merchant_id (string): Id of the merchant
-            starts_at (string): The time the session starts
-            ends_at (string): The time the session ends
-            type (string): Type of session (either weekday or weekend sessions)
+            session_id (string): Id of the session
+            user_id (string): Id of the user
+            booking_ref (string): Booking reference number
+            date (date): Date
             notes (string): Additional notes
-            title (string): Session titles
+            title (string): Session title
     '''
-    session_id: str
-    user_id: str
-    date: str
-    starts_at: str
-    ends_at: str
-    notes: str = None
-    title: str = None
+    session_id: str | None
+    user_id: str | None
+    booking_ref: str | None
+    date: str | None
+    notes: str | None
+    title: str | None
 
     _required_fields = validator("session_id", "user_id", "date", "starts_at", "ends_at", allow_reuse=True, check_fields=False)(utils.required)
 

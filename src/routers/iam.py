@@ -7,18 +7,18 @@ from ..iam import service
 
 register_router = APIRouter(
     prefix="/register",
-    tags=["register"],
+    tags=["IAM"],
     responses={404: {"message": "Not Found | 404"}},
 )
 
 sign_in_router = APIRouter(
     prefix="/sign-in",
-    tags=["sign_in"],
+    tags=["IAM"],
 )
 
 clients_router = APIRouter(
     prefix="/clients",
-    tags=["clients"],
+    tags=["IAM"],
 )
 
 
