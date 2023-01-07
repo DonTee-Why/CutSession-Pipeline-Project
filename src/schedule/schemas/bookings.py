@@ -1,4 +1,4 @@
-from pydantic import root_validator, validator
+from pydantic import validator
 import uuid
 
 from ..base_schemas import BookingsBaseModel
@@ -11,12 +11,14 @@ class BookingsCreateModel(BookingsBaseModel):
 
         Parameters:
             booking_id (string): Id of the booking
-            booking_ref (string): Ref no of the booking
+            booking_ref (string): Booking reference number
     '''
-    booking_id: str = str(uuid.uuid4())
-    booking_ref: str
+    booking_id: str | None
+    booking_ref: str | None
 
-    # _required_fields = validator("booking_ref", allow_reuse=True)(required)
+    _generate_id = validator("booking_id", pre=True, always=True, allow_reuse=True)(utils.generate_uuid)
+    _required_fields = validator("user_id", "date", allow_reuse=True)(utils.required)
+    _valid_date = validator("date", allow_reuse=True)(utils.valid_date)
 
 
 class BookingsModel(BookingsBaseModel):

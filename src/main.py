@@ -13,6 +13,7 @@ app.include_router(iam.register_router)
 app.include_router(iam.sign_in_router)
 app.include_router(iam.clients_router)
 app.include_router(schedule.studio_router)
+app.include_router(schedule.bookings_router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
