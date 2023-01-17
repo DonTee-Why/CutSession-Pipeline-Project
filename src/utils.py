@@ -69,3 +69,9 @@ def email(value):
 def hash_password(password: str):
     return pwd_context.hash(password)
 
+def is_valid_uuid(val):
+    try:
+        uuid.UUID(str(val))
+        return True
+    except ValueError:
+        return False

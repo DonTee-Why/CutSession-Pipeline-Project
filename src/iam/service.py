@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from functools import lru_cache
-from fastapi import HTTPException, status, Security, Depends
+from fastapi import HTTPException, status, Security, Depends, Request
 from fastapi.security import (
     OAuth2PasswordBearer,
     OAuth2PasswordRequestForm,
@@ -126,7 +126,7 @@ async def authorize(data: AuthModel):
     return auth_res
 
 
-async def fetch_clients(limit: int, offset: int, type: AccessType, city: str, name: str):
+async def fetch_clients(request: Request, limit: int, offset: int, type: AccessType, city: str, name: str):
     if type.value == "USER":
         fetch_query = user.select().where("city_of_residence", "LIKE", f"%{city}%").and_where("name", "LIKE", f"%{name}%").paginate(limit, offset)
         user_list = db.fetch_all(fetch_query.query)
@@ -138,8 +138,8 @@ async def fetch_clients(limit: int, offset: int, type: AccessType, city: str, na
     
     res = ResponseCollection(
         count=len(data),
-        next=f"",
-        previous=f"",
+        next=f"{request.base_url}/clients?type={type}&limit={limit}&offset={offset + 1}" if len(data) > limit else "",
+        previous=f"" if offset == 1 else f"{request.base_url}/clients?type={type}&limit={limit}&offset={offset - 1}",
         data=data
     )
 

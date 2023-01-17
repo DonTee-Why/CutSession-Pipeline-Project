@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query, Request
 from ..iam.base_schemas import AccessType, ResponseCollection
 from ..iam.schemas.user import UserCreateModel
 from ..iam.schemas.merchant import MerchantCreateModel
@@ -38,5 +38,5 @@ async def login(user: AuthModel):
 
 
 @clients_router.get("/", response_model=ResponseCollection, response_model_exclude_none=True)
-async def fetch_clients(limit: int, offset: int, type: AccessType, city: str = "", name: str = ""):
-    return await service.fetch_clients(limit, offset, type, city, name)
+async def fetch_clients(request: Request, limit: int, offset: int, type: AccessType, city: str = "", name: str = ""):
+    return await service.fetch_clients(request, limit, offset, type, city, name)

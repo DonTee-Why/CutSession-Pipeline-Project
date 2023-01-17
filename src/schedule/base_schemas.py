@@ -24,10 +24,7 @@ class BaseClassModel(BaseModel):
             email (string): Email address of the user
             phone_number (string): PPhone number of the user
     '''
-    name: str
-    email: str
-    username: str
-    phone_number: str = None
+    session_id: str | None
 
     class Config:
         fields = {
@@ -35,12 +32,9 @@ class BaseClassModel(BaseModel):
             "merchant_id": "merchantId",
             "starts_at": "startsAt",
             "ends_at": "endsAt",
-            "session_id": "id",
+            "session_id": "sessionId",
             "booking_id": "bookingId",
             "booking_ref": "bookingRef",
-            "phone_number": "phoneNumber",
-            "city_of_residence": "cityOfResidence",
-            "city_of_operation": "cityOfOperation",
         }
         allow_population_by_field_name = True
         use_enum_values = True
@@ -48,7 +42,7 @@ class BaseClassModel(BaseModel):
     _required_fields = validator("name", "email", "username", allow_reuse=True, check_fields=False)(utils.required)
 
 
-class SessionBaseModel(BaseModel):
+class SessionBaseModel(BaseClassModel):
     '''
     General Base class. It specifies common attributes for creating and retreiving studio sessions
 
@@ -58,7 +52,6 @@ class SessionBaseModel(BaseModel):
             ends_at (string): The time the session ends
             type (string): Type of session (either weekday or weekend sessions)
     '''
-    session_id: str | None
     merchant_id: str | None
     starts_at: str
     ends_at: str
@@ -66,7 +59,7 @@ class SessionBaseModel(BaseModel):
 
     _required_fields = validator("*", allow_reuse=True, check_fields=False)(utils.required)
 
-class BookingsBaseModel(BaseModel):
+class BookingsBaseModel(BaseClassModel):
     '''
     General Base class. It specifies common attributes for creating and retreiving studio sessions
 
@@ -78,7 +71,6 @@ class BookingsBaseModel(BaseModel):
             notes (string): Additional notes
             title (string): Session title
     '''
-    session_id: str | None
     user_id: str | None
     booking_ref: str | None
     date: str | None
