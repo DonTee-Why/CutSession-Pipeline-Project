@@ -14,10 +14,11 @@ class BookingsCreateModel(BookingsBaseModel):
             booking_ref (string): Booking reference number
     '''
     booking_id: str | None
-    booking_ref: str | None
+    session_id: str
+    # booking_ref: str | None
 
     _generate_id = validator("booking_id", pre=True, always=True, allow_reuse=True)(utils.generate_uuid)
-    _required_fields = validator("user_id", "date", allow_reuse=True)(utils.required)
+    _required_fields = validator("user_id", "session_id", "date", allow_reuse=True)(utils.required)
     _valid_date = validator("date", allow_reuse=True)(utils.valid_date)
 
 

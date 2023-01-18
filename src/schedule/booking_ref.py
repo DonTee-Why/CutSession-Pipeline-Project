@@ -19,12 +19,14 @@ class RandomStrategy(BookingRefStrategy):
         return ref
 
 
-class DerivedStrategy(BookingRefStrategy, BookingsCreateModel):
-    # booking_id = "50b96d7e-e657-454d-908d-dd90d35d6a19"
-    # date = "2023-02-23"
+class DerivedStrategy(BookingRefStrategy):
+    def __init__(self, booking: BookingsCreateModel) -> None:
+        super().__init__()
+        self.booking = booking
+
     def generate_booking_ref(self) -> str:
-        booking_id = self.booking_id[-4:]
-        date = datetime.strptime(self.date, "%Y-%m-%d")
+        booking_id = self.booking.booking_id[-4:]
+        date = datetime.strptime(self.booking.date, "%Y-%m-%d")
         ref = "".join(["BK-", booking_id.upper(), str(date.day)])
         return ref
 

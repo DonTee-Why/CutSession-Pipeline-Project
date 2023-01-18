@@ -15,10 +15,11 @@ from .base_schemas import AccessType, ResponseCollection
 from .schemas.auth import AuthModel, AuthResponse
 from .schemas.user import UserCreateModel, UserModel, UserInModel
 from .schemas.merchant import MerchantCreateModel, MerchantModel, MerchantInModel
-from ..database.database import db, User, Merchant
+from ..database.database import DBManager, User, Merchant
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+db = DBManager()
 user = User()
 merchant = Merchant()
 settings = AppSettings()
