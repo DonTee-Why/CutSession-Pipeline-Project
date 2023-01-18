@@ -1,25 +1,32 @@
 import sqlite3
+from faker import Faker
 from fastapi import HTTPException
+from src.config import get_settings
+from uuid import uuid4
+from datetime import datetime
 
+
+fake = Faker()
 
 class DBConnection():
-    def __init__(self, db):
-        self.conn = sqlite3.connect(database=db, check_same_thread=False)
+    def __init__(self, db_url: str):
+        self.conn = sqlite3.connect(database=db_url, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("pragma foreign_keys = on")
         self.conn.commit()
     
     # Get DBManager instance
     @classmethod
-    def get_db_conn_instance(cls):
+    def get_db_conn_instance(cls, env: str):
+        db_url = "cut_sess.sqlite" if env != "testing" else "test_db.sqlite"
         if not hasattr(cls, "instance"):
-            cls.db_instance = DBConnection("cut_sess.sqlite")
+            cls.db_instance = DBConnection(db_url)
         return cls.db_instance.conn
 
 
 class DBManager():
-    def __init__(self) -> None:
-        self.db = DBConnection.get_db_conn_instance()
+    def __init__(self, env: str = "local") -> None:
+        self.db = DBConnection.get_db_conn_instance(env)
 
     def create_tables(self, sql_script: str):
         try:
@@ -128,6 +135,11 @@ class DbQuery():
         self.query = "".join([self.query, pagination_query])
         return self
 
+    def db_join(self, table_name: str, condition: str):
+        join_query = f"INNER JOIN {table_name} ON {condition} "
+        self.query = "".join([self.query, join_query])
+        return self
+
 
 class User(DbQuery):
     def __init__(self) -> None:
@@ -151,7 +163,7 @@ class User(DbQuery):
         self.db_insert(self.table_name)
         return self
 
-    def values(self, arg: dict()):
+    def values(self, arg: dict):
         self.db_values(arg)
         return self
 
@@ -159,6 +171,27 @@ class User(DbQuery):
         arg = [limit, (limit * offset - limit)]
         self.db_paginate(arg)
         return self
+
+    def join(self, table_name: str, condition):
+        self.db_join(table_name, condition)
+        return self
+
+    def fake(self, count: int):
+        cities = ["Lagos", "Ibadan", "Sango Ota", "Ikorodu"]
+        db = DBManager()
+        for i in range(count):
+            data = {
+                "user_id": str(uuid4()),
+                "name": fake.name(),
+                "email": fake.email(),
+                "username": fake.first_name(),
+                "phoneNumber": fake.phone_number(),
+                "dob": "1993-12-09",
+                "cityOfResidence": cities[i],
+                "password": "password"
+            }
+            query = self.insert().values(data)
+            db.fetch_one(query.query)
 
 
 class Merchant(DbQuery):
@@ -190,6 +223,10 @@ class Merchant(DbQuery):
     def paginate(self, limit: int, offset: int = 1):
         args = (limit, (limit * offset - limit))
         self.db_paginate(args)
+        return self
+
+    def join(self, table_name: str, condition):
+        self.db_join(table_name, condition)
         return self
 
 
@@ -224,6 +261,10 @@ class Session(DbQuery):
         self.db_paginate(args)
         return self
 
+    def join(self, table_name: str, condition):
+        self.db_join(table_name, condition)
+        return self
+
 
 class Booking(DbQuery):
     def __init__(self) -> None:
@@ -254,6 +295,10 @@ class Booking(DbQuery):
     def paginate(self, limit: int, offset: int = 1):
         args = (limit, (limit * offset - limit))
         self.db_paginate(args)
+        return self
+    
+    def join(self, table_name: str, condition):
+        self.db_join(table_name, condition)
         return self
 
 

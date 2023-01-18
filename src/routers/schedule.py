@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query, Request
 from ..iam.base_schemas import AccessType, ResponseCollection
 from ..schedule.schemas.session import SessionCreateModel
 from ..schedule.schemas.bookings import BookingsCreateModel
@@ -33,5 +33,10 @@ def create_studio_session(merchantId: str, session: SessionCreateModel):
 
 
 @bookings_router.post("/")
-def create_studio_session(booking: BookingsCreateModel):
+def book_studio_session(booking: BookingsCreateModel):
     return service.book_session(booking)
+
+
+@bookings_router.get("/")
+def fetch_bookings(request: Request, limit: int, offset: int, type: AccessType, city: str = "", name: str = "", merchant: str = "", period: str = ""):
+    return service.fetch_bookings(request, limit, offset, type, city, merchant, period)

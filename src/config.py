@@ -9,3 +9,6 @@ class AppSettings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+
+def get_settings():
+    return AppSettings()
