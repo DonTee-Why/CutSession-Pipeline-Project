@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from fastapi import FastAPI
 from src.config import get_settings
-from src.database.database import DBManager
+from src.database.database import DBManager, User, Merchant, Session, Booking
 
 
 
@@ -21,3 +21,7 @@ class BaseTestClass():
     def tear_down(self) -> None:
         Path.unlink("./test_db.sqlite")
 
+user = User()
+merchant = Merchant()
+session = Session()
+booking = Booking()

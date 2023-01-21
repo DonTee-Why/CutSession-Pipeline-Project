@@ -1,8 +1,7 @@
 from fastapi.testclient import TestClient
 import pytest
-from src.config import AppSettings
 from src import main
-from .base import BaseTestClass
+from .base import (BaseTestClass, user, merchant, session, booking)
 
 
 client = TestClient(main.app)
@@ -79,7 +78,7 @@ class TestIAM(BaseTestClass):
     def test_sign_in_returns_ok(self):
         self.set_up()
 
-        self.db.session.add(self.user)
+        user.fake(2)
 
         payload = {
             "username": "string",

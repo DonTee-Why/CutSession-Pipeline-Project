@@ -46,6 +46,22 @@ class DBManager():
     def to_dict(self, row):
         return {key: row[key] for key in row.keys()}
 
+    def create(self, arg: str):
+        try:
+            cursor = self.db.cursor()
+            cursor.execute()
+        except Exception as e:
+            self.db.rollback()
+            raise HTTPException(status_code=500,
+                                detail={
+                                    "message": "Error occured while trying to execute query.",
+                                    "errors": [
+                                        repr(e)
+                                    ]
+                                })
+        finally:
+            self.db.commit()
+
     def fetch_one(self, arg: str):
         try:
             cursor = self.db.cursor()
@@ -187,7 +203,7 @@ class User(DbQuery):
                 "username": fake.first_name(),
                 "phoneNumber": fake.phone_number(),
                 "dob": "1993-12-09",
-                "cityOfResidence": cities[i],
+                "city_of_residence": cities[i],
                 "password": "password"
             }
             query = self.insert().values(data)
@@ -228,6 +244,23 @@ class Merchant(DbQuery):
     def join(self, table_name: str, condition):
         self.db_join(table_name, condition)
         return self
+
+    def fake(self, count: int):
+        cities = ["Lagos", "Ibadan", "Sango Ota", "Ikorodu"]
+        db = DBManager()
+        for i in range(count):
+            data = {
+                "merchant_id": str(uuid4()),
+                "name": fake.name(),
+                "email": fake.email(),
+                "username": fake.first_name(),
+                "phoneNumber": fake.phone_number(),
+                "dob": "1993-12-09",
+                "cityOfResidence": cities[i],
+                "password": "password"
+            }
+            query = self.insert().values(data)
+            db.fetch_one(query.query)
 
 
 class Session(DbQuery):
